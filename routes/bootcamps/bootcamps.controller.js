@@ -7,7 +7,7 @@ const {
   getBootcampsInRadius,
 } = require("../../models/Bootcamp.model");
 const asyncHandler = require("../../utils/asyncHandler");
-const bootcampsDatabas = require("../../models/Bootcamp.mongo");
+const bootcampsDatabase = require("../../models/Bootcamp.mongo");
 
 /**
  * Desc {Get all bootcamps}
@@ -15,16 +15,63 @@ const bootcampsDatabas = require("../../models/Bootcamp.mongo");
  * Access {Public}
  */
 const httpGetAllBootcamps = asyncHandler(async (req, res) => {
-  let queryStr = JSON.stringify(req.query);
+  const reqQuery = { ...req.query };
+
+  // Fields to exclude from query parameters
+  const removeFields = ["select", "sort", "page", "limit"];
+  removeFields.forEach((param) => delete reqQuery[param]);
+  let queryStr = JSON.stringify(reqQuery);
+
+  // Filter options
   queryStr = queryStr.replace(
     /\b(gt|gte|lt|lte|in)\b/g,
     (match) => `$${match}`
   );
-  const query = await bootcampsDatabas.find(JSON.parse(queryStr));
-  const bootcamps = query;
-  res
-    .status(200)
-    .json({ success: true, count: bootcamps.length, data: bootcamps });
+
+  // Finding resource with optional filters
+  let query = await bootcampsDatabase.find(JSON.parse(queryStr));
+
+  // Select Fields
+  if (req.query.select) {
+    const fields = req.query.select.split(",").join(" ");
+    query = query.select(fields);
+  }
+
+  // Pagination
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 25;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const total = await bootcampsDatabase.countDocuments();
+
+  query = query.skip(startIndex).limit(limit);
+
+  // if (populate) {
+  //   query = query.populate(populate);
+  // }
+
+  // Executing query
+  const results = query;
+
+  // Pagination result
+  const pagination = {};
+
+  if (endIndex < total) {
+    pagination.next = {
+      page: page + 1,
+      limit,
+    };
+  }
+
+  if (startIndex > 0) {
+    pagination.prev = {
+      page: page - 1,
+      limit,
+    };
+  }
+
+  const bootcamps = await getAllBootcamps();
+  res.status(200).json({ success: true, count: bootcamps.length, data: query });
 });
 
 /**
