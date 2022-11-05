@@ -5,19 +5,10 @@ const colors = require("colors");
 const morgan = require("morgan");
 const logger = require("./middleware/logger.middleware");
 const { mongoConnect } = require("./services/mongo");
-
-// Load env vars
-dotenv.config({ path: "./config/config.env" });
-
-// Connect to the database
-mongoConnect();
+const errorHandler = require("./middleware/error.middleware");
+const bootcampsRouter = require("./routes/bootcamps/bootcamps.router");
 
 const app = express();
-const PORT = 5000;
-
-// Versioned API that mounts all routes
-app.use("/v1", api);
-
 // Body parser
 app.use(express.json());
 
@@ -26,6 +17,18 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
+// Versioned API that mounts all routes
+app.use("/v1/bootcamps", bootcampsRouter);
+app.use(errorHandler);
+
+// Load env vars
+dotenv.config({ path: "./config/config.env" });
+
+// Connect to the database
+mongoConnect();
+
+// Start Server
+const PORT = process.env | 5000;
 const server = app.listen(PORT, () =>
   console.log(
     `App listening in ${process.env.NODE_ENV} mode on port ${PORT}...`.yellow
@@ -39,3 +42,6 @@ process.on("unhandledRejection", (reason, promise) => {
   // Close server & exit process
   server.close(() => process.exit(1));
 });
+
+console.log("5");
+module.exports = app;

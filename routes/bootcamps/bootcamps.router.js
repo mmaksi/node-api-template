@@ -1,4 +1,6 @@
 const express = require("express");
+const app = require("../../server");
+const api = require("../api");
 const {
   httpGetAllBootcamps,
   httpGetBootcamp,
@@ -10,6 +12,7 @@ const {
 } = require("./bootcamps.controller");
 
 const bootcampsRouter = express.Router();
+console.log("1");
 
 bootcampsRouter.get("/", httpGetAllBootcamps);
 bootcampsRouter.post("/", httpCreateBootcamp);
@@ -17,8 +20,6 @@ bootcampsRouter.post("/", httpCreateBootcamp);
 bootcampsRouter.get("/:id", httpGetBootcamp);
 bootcampsRouter.put("/:id", httpUpdateBootcamp);
 bootcampsRouter.delete("/:id", httpDeleteBootcamp);
-
-bootcampsRouter.put("/:id/photo", httpBootcampPhotoUp);
-bootcampsRouter.get("/radius/:zipcode/:distance", httpGetBootcampsInRadius);
+console.log("2");
 
 module.exports = bootcampsRouter;
