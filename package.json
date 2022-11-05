@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "SET NODE_ENV=production& node server",
-    "dev": "nodemon server"
+    "dev": "nodemon server",
+    "seeder:import": "node seeder -i",
+    "seeder:destroy": "node seeder -d"
   },
   "repository": {
     "type": "git",
