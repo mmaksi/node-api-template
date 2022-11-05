@@ -43,5 +43,4 @@ process.on("unhandledRejection", (reason, promise) => {
   server.close(() => process.exit(1));
 });
 
-console.log("5");
 module.exports = app;

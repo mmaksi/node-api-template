@@ -13,7 +13,7 @@ const ErrorResponse = require("../../utils/errorResponse");
  * Route {GET /api/v1/bootcamps}
  * Access {Public}
  */
-asyncHandler(async function httpGetAllBootcamps(req, res, next) {
+const httpGetAllBootcamps = asyncHandler(async (req, res, next) => {
   const bootcamps = await getAllBootcamps();
   res
     .status(200)
@@ -25,7 +25,7 @@ asyncHandler(async function httpGetAllBootcamps(req, res, next) {
  *  Route {GET /api/v1/bootcamps/:id}
  *  Access {Public}
  */
-asyncHandler(async function httpGetBootcamp(req, res) {
+const httpGetBootcamp = asyncHandler(async (req, res) => {
   const bootcamp = await getBootcampById(req.params.id);
   if (!bootcamp) return res.status(404).json({ success: false, data: null });
   return res.status(200).json({ success: true, data: bootcamp });
@@ -36,7 +36,7 @@ asyncHandler(async function httpGetBootcamp(req, res) {
  *  Route {POST /api/v1/bootcamps}
  *  Access {Private}
  */
-asyncHandler(async function httpCreateBootcamp(req, res) {
+const httpCreateBootcamp = asyncHandler(async (req, res) => {
   const bootcamp = req.body;
   const response = await createBootcamp(bootcamp);
   res.status(200).json({ success: true, data: response });
@@ -47,7 +47,7 @@ asyncHandler(async function httpCreateBootcamp(req, res) {
  *  Route {PUT /api/v1/bootcamps}
  *  Access {Private}
  */
-asyncHandler(async function httpUpdateBootcamp(req, res) {
+const httpUpdateBootcamp = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const bootcamp = req.body;
 
@@ -62,7 +62,7 @@ asyncHandler(async function httpUpdateBootcamp(req, res) {
  *  Route {DELETE /api/v1/bootcamps}
  *  Access {Private}
  */
-asyncHandler(async function httpDeleteBootcamp(req, res, next) {
+const httpDeleteBootcamp = asyncHandler(async (req, res, next) => {
   const deletedBootcamp = await deleteBootcamp(req.params.id);
 
   if (!deletedBootcamp)

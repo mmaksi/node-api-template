@@ -6,7 +6,6 @@ const errorHandler = (err, req, res, next) => {
 
   // Log to console for development
   console.log(err.stack.red);
-  console.log("errorsss");
 
   // Mongoose errors
   switch (err.name) {
