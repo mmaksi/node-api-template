@@ -20,4 +20,6 @@ bootcampsRouter.get("/:id", httpGetBootcamp);
 bootcampsRouter.put("/:id", httpUpdateBootcamp);
 bootcampsRouter.delete("/:id", httpDeleteBootcamp);
 
+bootcampsRouter.get("/radius/:zipcode/:distance", httpGetBootcampsInRadius);
+
 module.exports = bootcampsRouter;

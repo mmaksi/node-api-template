@@ -1,3 +1,4 @@
+const geocoder = require("../utils/geocoder");
 const bootcampDatabase = require("./Bootcamp.mongo");
 
 async function getAllBootcamps() {
@@ -39,10 +40,28 @@ async function deleteBootcamp(id) {
   return deletedBootcamp;
 }
 
+async function getBootcampsInRadius(zipcode, distance) {
+  // Get lat/lng from geocoder
+  const loc = await geocoder.geocode(zipcode);
+  const lat = loc[0].latitude;
+  const lng = loc[0].longitude;
+
+  // Calc radius using radians
+  // Divide dist by radius of Earth
+  // Earth Radius = 3,963 mi / 6,378 km
+  const radius = distance / 6378;
+
+  const bootcamps = await bootcampDatabase.find({
+    location: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+  });
+  return bootcamps;
+}
+
 module.exports = {
   getAllBootcamps,
   getBootcampById,
   createBootcamp,
   updateBootcamp,
   deleteBootcamp,
+  getBootcampsInRadius,
 };

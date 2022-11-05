@@ -4,16 +4,16 @@ const {
   createBootcamp,
   updateBootcamp,
   deleteBootcamp,
+  getBootcampsInRadius,
 } = require("../../models/Bootcamp.model");
 const asyncHandler = require("../../utils/asyncHandler");
-const ErrorResponse = require("../../utils/errorResponse");
 
 /**
  * Desc {Get all bootcamps}
  * Route {GET /api/v1/bootcamps}
  * Access {Public}
  */
-const httpGetAllBootcamps = asyncHandler(async (req, res, next) => {
+const httpGetAllBootcamps = asyncHandler(async (req, res) => {
   const bootcamps = await getAllBootcamps();
   res
     .status(200)
@@ -62,12 +62,25 @@ const httpUpdateBootcamp = asyncHandler(async (req, res) => {
  *  Route {DELETE /api/v1/bootcamps}
  *  Access {Private}
  */
-const httpDeleteBootcamp = asyncHandler(async (req, res, next) => {
+const httpDeleteBootcamp = asyncHandler(async (req, res) => {
   const deletedBootcamp = await deleteBootcamp(req.params.id);
 
   if (!deletedBootcamp)
     return res.status(404).json({ success: false, data: null });
   return res.status(200).json({ success: true, data: deleteBootcamp });
+});
+
+// @desc      Get bootcamps within a radius
+// @route     GET /v1/bootcamps/radius/:zipcode/:distance
+// @access    Private
+const httpGetBootcampsInRadius = asyncHandler(async (req, res) => {
+  const { zipcode, distance } = req.params;
+  const bootcamps = await getBootcampsInRadius(zipcode, distance);
+  res.status(200).json({
+    success: true,
+    count: bootcamps.length,
+    data: bootcamps,
+  });
 });
 
 module.exports = {
@@ -76,4 +89,5 @@ module.exports = {
   httpCreateBootcamp,
   httpUpdateBootcamp,
   httpDeleteBootcamp,
+  httpGetBootcampsInRadius,
 };
