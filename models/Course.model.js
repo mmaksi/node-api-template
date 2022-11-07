@@ -14,6 +14,8 @@ const getCourse = async (id) => {
   return course;
 };
 
+const addCourse = async (id) => {};
+
 const updateCourse = async (id, body) => {
   // Make sure user is course owner
   // if (course.user.toString() !== req.user.id && req.user.role !== "admin") {
@@ -51,9 +53,11 @@ const deleteCourse = async (id) => {
   }
   return course;
 };
+
 module.exports = {
   getAllCourses,
   getCourse,
+  addCourse,
   updateCourse,
   deleteCourse,
 };

@@ -1,22 +1,30 @@
-const express = require("express");
+const path = require("path");
 const dotenv = require("dotenv");
-const api = require("./routes/api");
 const colors = require("colors");
 const morgan = require("morgan");
-const logger = require("./middleware/logger.middleware");
+const express = require("express");
+const fileUpload = require("express-fileupload");
+
+const api = require("./routes/api");
 const { mongoConnect } = require("./services/mongo");
+const logger = require("./middleware/logger.middleware");
 const errorHandler = require("./middleware/error.middleware");
-const bootcampsRouter = require("./routes/bootcamps/bootcamps.router");
 const coursesRouter = require("./routes/courses/courses.router");
+const bootcampsRouter = require("./routes/bootcamps/bootcamps.router");
 
 const app = express();
+
 // Body parser
 app.use(express.json());
-
+// File upload middleware
+app.use(fileUpload());
 // Dev logging middleware
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
+// Set static directory
+app.use(express.static(path.join(__dirname, "public")));
 
 // Versioned API that mounts all routes
 app.use("/v1/bootcamps", bootcampsRouter);

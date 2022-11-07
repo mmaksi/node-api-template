@@ -5,6 +5,8 @@ const {
   deleteCourse,
 } = require("../../models/Course.model");
 const coursesDatabase = require("../../models/Course.mongo");
+const bootcampsData = require("../../models/Bootcamp.mongo");
+const { getBootcampById } = require("../../models/Bootcamp.model");
 const asyncHandler = require("../../utils/asyncHandler");
 const ErrorResponse = require("../../utils/errorResponse");
 
@@ -42,6 +44,40 @@ const httpGetCourse = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`No course with the id of ${req.params.id}`, 404)
     );
   }
+
+  res.status(200).json({
+    success: true,
+    data: course,
+  });
+});
+
+const httpAddCourse = asyncHandler(async (req, res, next) => {
+  req.body.bootcamp = req.params.id;
+  // req.body.user = req.user.id;
+
+  const bootcamp = await getBootcampById(req.params.id);
+  console.log(bootcamp);
+
+  if (!bootcamp) {
+    return next(
+      new ErrorResponse(
+        `No bootcamp with the id of ${req.params.bootcampId}`,
+        404
+      )
+    );
+  }
+
+  // Make sure user is bootcamp owner
+  // if (bootcamp.user.toString() !== req.user.id && req.user.role !== "admin") {
+  //   return next(
+  //     new ErrorResponse(
+  //       `User ${req.user.id} is not authorized to add a course to bootcamp ${bootcamp._id}`,
+  //       401
+  //     )
+  //   );
+  // }
+
+  const course = await coursesDatabase.create(req.body);
 
   res.status(200).json({
     success: true,
@@ -87,6 +123,7 @@ const httpDeleteCourse = asyncHandler(async (req, res, next) => {
 module.exports = {
   httpGetAllCourses,
   httpGetCourse,
+  httpAddCourse,
   httpUpdateCourse,
   httpDeleteCourse,
 };
