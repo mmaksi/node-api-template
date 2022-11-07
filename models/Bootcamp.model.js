@@ -13,8 +13,6 @@ async function getAllBootcamps() {
 async function getBootcampById(id) {
   try {
     const bootcamp = await bootcampDatabase.findById(id);
-    const news = bootcamp.skip(1);
-    console.log({ news });
     return bootcamp;
   } catch (error) {
     console.log(error);
@@ -38,7 +36,8 @@ async function updateBootcamp(id, bootcamp) {
 }
 
 async function deleteBootcamp(id) {
-  const deletedBootcamp = await bootcampDatabase.findByIdAndRemove(id, {});
+  const deletedBootcamp = await bootcampDatabase.findByIdAndRemove(id);
+
   return deletedBootcamp;
 }
 

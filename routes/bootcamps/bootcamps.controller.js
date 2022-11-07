@@ -24,7 +24,9 @@ const httpGetAllBootcamps = asyncHandler(async (req, res) => {
   let queryStr = JSON.stringify(reqQuery);
 
   // Filter options
-  const selectedFields = req.query.select.split(",").join(" ") || "";
+  const selectedFields = req.query.select
+    ? req.query.select.split(",").join(" ")
+    : "";
 
   queryStr = queryStr.replace(
     /\b(gt|gte|lt|lte|in)\b/g,
@@ -42,7 +44,8 @@ const httpGetAllBootcamps = asyncHandler(async (req, res) => {
     .find(JSON.parse(queryStr))
     .select(selectedFields)
     .skip(startIndex)
-    .limit(limit);
+    .limit(limit)
+    .populate("courses");
 
   const totalDocuments = await bootcampsDatabase.countDocuments();
 
@@ -121,7 +124,7 @@ const httpDeleteBootcamp = asyncHandler(async (req, res) => {
 
   if (!deletedBootcamp)
     return res.status(404).json({ success: false, data: null });
-  return res.status(200).json({ success: true, data: deleteBootcamp });
+  return res.status(200).json({ success: true, data: deletedBootcamp });
 });
 
 // @desc      Get bootcamps within a radius

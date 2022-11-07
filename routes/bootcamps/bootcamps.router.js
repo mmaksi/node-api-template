@@ -1,6 +1,7 @@
 const express = require("express");
 const app = require("../../server");
 const api = require("../api");
+const coursesRouter = require("../courses/courses.router");
 const {
   httpGetAllBootcamps,
   httpGetBootcamp,
@@ -13,6 +14,10 @@ const {
 
 const bootcampsRouter = express.Router();
 
+// Reroutering to other resources
+bootcampsRouter.use("/:id/courses", coursesRouter);
+
+// Internal routes
 bootcampsRouter.get("/", httpGetAllBootcamps);
 bootcampsRouter.post("/", httpCreateBootcamp);
 

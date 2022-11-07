@@ -7,6 +7,7 @@ const logger = require("./middleware/logger.middleware");
 const { mongoConnect } = require("./services/mongo");
 const errorHandler = require("./middleware/error.middleware");
 const bootcampsRouter = require("./routes/bootcamps/bootcamps.router");
+const coursesRouter = require("./routes/courses/courses.router");
 
 const app = express();
 // Body parser
@@ -19,6 +20,7 @@ if (process.env.NODE_ENV === "development") {
 
 // Versioned API that mounts all routes
 app.use("/v1/bootcamps", bootcampsRouter);
+app.use("/v1/courses", coursesRouter);
 app.use(errorHandler);
 
 // Load env vars
