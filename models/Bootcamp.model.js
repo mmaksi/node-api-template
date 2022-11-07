@@ -13,6 +13,8 @@ async function getAllBootcamps() {
 async function getBootcampById(id) {
   try {
     const bootcamp = await bootcampDatabase.findById(id);
+    const news = bootcamp.skip(1);
+    console.log({ news });
     return bootcamp;
   } catch (error) {
     console.log(error);
@@ -49,7 +51,7 @@ async function getBootcampsInRadius(zipcode, distance) {
   // Calc radius using radians
   // Divide dist by radius of Earth
   // Earth Radius = 3,963 mi / 6,378 km
-  const radius = distance / 6378;
+  const radius = distance / 3963;
 
   const bootcamps = await bootcampDatabase.find({
     location: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },

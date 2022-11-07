@@ -15,6 +15,7 @@ const bootcampsDatabase = require("../../models/Bootcamp.mongo");
  * Access {Public}
  */
 const httpGetAllBootcamps = asyncHandler(async (req, res) => {
+  let query;
   const reqQuery = { ...req.query };
 
   // Fields to exclude from query parameters
@@ -23,28 +24,27 @@ const httpGetAllBootcamps = asyncHandler(async (req, res) => {
   let queryStr = JSON.stringify(reqQuery);
 
   // Filter options
+  const selectedFields = req.query.select.split(",").join(" ") || "";
+
   queryStr = queryStr.replace(
     /\b(gt|gte|lt|lte|in)\b/g,
     (match) => `$${match}`
   );
-
-  // Finding resource with optional filters
-  let query = await bootcampsDatabase.find(JSON.parse(queryStr));
-
-  // Select Fields
-  if (req.query.select) {
-    const fields = req.query.select.split(",").join(" ");
-    query = query.select(fields);
-  }
 
   // Pagination
   const page = parseInt(req.query.page, 10) || 1;
   const limit = parseInt(req.query.limit, 10) || 25;
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
-  const total = await bootcampsDatabase.countDocuments();
 
-  query = query.skip(startIndex).limit(limit);
+  // Finding resource with optional filters
+  query = await bootcampsDatabase
+    .find(JSON.parse(queryStr))
+    .select(selectedFields)
+    .skip(startIndex)
+    .limit(limit);
+
+  const totalDocuments = await bootcampsDatabase.countDocuments();
 
   // if (populate) {
   //   query = query.populate(populate);
@@ -56,7 +56,7 @@ const httpGetAllBootcamps = asyncHandler(async (req, res) => {
   // Pagination result
   const pagination = {};
 
-  if (endIndex < total) {
+  if (endIndex < totalDocuments) {
     pagination.next = {
       page: page + 1,
       limit,

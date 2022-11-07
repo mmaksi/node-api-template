@@ -27,7 +27,7 @@ const reviews = JSON.parse(
 const importData = async () => {
   try {
     await bootcampsDatabase.create(bootcamps);
-    // await Course.create(courses);
+    await Course.create(courses);
     // await User.create(users);
     // await Review.create(reviews);
     console.log("Data Imported...".green.inverse);
@@ -40,7 +40,7 @@ const importData = async () => {
 const deleteData = async () => {
   try {
     await bootcampsDatabase.deleteMany();
-    // await Course.deleteMany();
+    await Course.deleteMany();
     // await User.deleteMany();
     // await Review.deleteMany();
     console.log("Data Destroyed...".red.inverse);
