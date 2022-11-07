@@ -14,7 +14,46 @@ const getCourse = async (id) => {
   return course;
 };
 
+const updateCourse = async (id, body) => {
+  // Make sure user is course owner
+  // if (course.user.toString() !== req.user.id && req.user.role !== "admin") {
+  //   return next(
+  //     new ErrorResponse(
+  //       `User ${req.user.id} is not authorized to update course ${course._id}`,
+  //       401
+  //     )
+  //   );
+  // }
+
+  const course = await coursesDatabase.findByIdAndUpdate(id, body, {
+    new: true,
+    runValidators: true,
+  });
+
+  course ? await course.save() : null;
+  return course;
+};
+
+const deleteCourse = async (id) => {
+  const course = await coursesDatabase.findById(id);
+
+  // Make sure user is course owner
+  // if (course.user.toString() !== req.user.id && req.user.role !== "admin") {
+  //   return next(
+  //     new ErrorResponse(
+  //       `User ${req.user.id} is not authorized to delete course ${course._id}`,
+  //       401
+  //     )
+  //   );
+  // }
+  if (course) {
+    await course.remove();
+  }
+  return course;
+};
 module.exports = {
   getAllCourses,
   getCourse,
+  updateCourse,
+  deleteCourse,
 };

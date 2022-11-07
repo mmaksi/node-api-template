@@ -1,4 +1,9 @@
-const { getAllCourses, getCourse } = require("../../models/Course.model");
+const {
+  getAllCourses,
+  getCourse,
+  updateCourse,
+  deleteCourse,
+} = require("../../models/Course.model");
 const coursesDatabase = require("../../models/Course.mongo");
 const asyncHandler = require("../../utils/asyncHandler");
 const ErrorResponse = require("../../utils/errorResponse");
@@ -44,7 +49,44 @@ const httpGetCourse = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc      Update course
+// @route     PUT /api/v1/courses/:id
+// @access    Private
+const httpUpdateCourse = asyncHandler(async (req, res, next) => {
+  const foundCourse = await getCourse(req.params.id);
+  const updatedCourse = await updateCourse(req.params.id, req.body);
+  if (!foundCourse || !updatedCourse) {
+    return next(
+      new ErrorResponse(`No course with the id of ${req.params.id}`, 404)
+    );
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: updatedCourse,
+  });
+});
+
+// @desc      Delete course
+// @route     DELETE /api/v1/courses/:id
+// @access    Private
+const httpDeleteCourse = asyncHandler(async (req, res, next) => {
+  const deletedCourse = await deleteCourse(req.params.id);
+  if (deletedCourse) {
+    res.status(200).json({
+      success: true,
+      data: {},
+    });
+  } else {
+    return next(
+      new ErrorResponse(`No course with the id of ${req.params.id}`, 404)
+    );
+  }
+});
+
 module.exports = {
   httpGetAllCourses,
   httpGetCourse,
+  httpUpdateCourse,
+  httpDeleteCourse,
 };
