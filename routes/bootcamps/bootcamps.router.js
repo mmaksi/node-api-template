@@ -9,9 +9,11 @@ const {
   httpUpdateBootcamp,
   httpDeleteBootcamp,
   httpGetBootcampsInRadius,
-  httpBootcampPhotoUp,
   httpUploadPhoto,
 } = require("./bootcamps.controller");
+
+const bootcampsDatabase = require("../../models/Bootcamp.mongo");
+const advFiltering = require("../../middleware/advFilters");
 
 const bootcampsRouter = express.Router();
 
@@ -19,7 +21,11 @@ const bootcampsRouter = express.Router();
 bootcampsRouter.use("/:id/courses", coursesRouter);
 
 // Internal routes
-bootcampsRouter.get("/", httpGetAllBootcamps);
+bootcampsRouter.get(
+  "/",
+  advFiltering(bootcampsDatabase, "courses"),
+  httpGetAllBootcamps
+);
 bootcampsRouter.post("/", httpCreateBootcamp);
 
 bootcampsRouter.get("/:id", httpGetBootcamp);
