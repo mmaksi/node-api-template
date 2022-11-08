@@ -3,11 +3,10 @@ const dotenv = require("dotenv");
 const colors = require("colors");
 const morgan = require("morgan");
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
 
-const api = require("./routes/api");
 const { mongoConnect } = require("./services/mongo");
-const logger = require("./middleware/logger.middleware");
 const errorHandler = require("./middleware/error.middleware");
 const coursesRouter = require("./routes/courses/courses.router");
 const bootcampsRouter = require("./routes/bootcamps/bootcamps.router");
@@ -23,7 +22,8 @@ app.use(fileUpload());
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
-
+// Cookie Parser
+app.use(cookieParser());
 // Set static directory
 app.use(express.static(path.join(__dirname, "public")));
 

@@ -1,6 +1,4 @@
 const express = require("express");
-const app = require("../../server");
-const api = require("../api");
 
 const {
   httpGetAllCourses,
@@ -12,6 +10,7 @@ const {
 
 const advFiltering = require("../../middleware/advFilters");
 const coursesDatabase = require("../../models/Course.mongo");
+const protect = require("../../middleware/auth.middleware");
 
 const coursesRouter = express.Router({ mergeParams: true });
 
@@ -23,11 +22,11 @@ coursesRouter.get(
   }),
   httpGetAllCourses
 );
-coursesRouter.post("/", httpAddCourse);
+coursesRouter.post("/", protect, httpAddCourse);
 
 coursesRouter.get("/:id", httpGetCourse);
-coursesRouter.post("/:id", httpAddCourse);
-coursesRouter.put("/:id", httpUpdateCourse);
-coursesRouter.delete("/:id", httpDeleteCourse);
+coursesRouter.post("/:id", protect, httpAddCourse);
+coursesRouter.put("/:id", protect, httpUpdateCourse);
+coursesRouter.delete("/:id", protect, httpDeleteCourse);
 
 module.exports = coursesRouter;

@@ -1,6 +1,4 @@
 const express = require("express");
-const app = require("../../server");
-const api = require("../api");
 const coursesRouter = require("../courses/courses.router");
 const {
   httpGetAllBootcamps,
@@ -14,6 +12,7 @@ const {
 
 const bootcampsDatabase = require("../../models/Bootcamp.mongo");
 const advFiltering = require("../../middleware/advFilters");
+const protect = require("../../middleware/auth.middleware");
 
 const bootcampsRouter = express.Router();
 
@@ -26,14 +25,14 @@ bootcampsRouter.get(
   advFiltering(bootcampsDatabase, "courses"),
   httpGetAllBootcamps
 );
-bootcampsRouter.post("/", httpCreateBootcamp);
+bootcampsRouter.post("/", protect, httpCreateBootcamp);
 
 bootcampsRouter.get("/:id", httpGetBootcamp);
-bootcampsRouter.put("/:id", httpUpdateBootcamp);
-bootcampsRouter.delete("/:id", httpDeleteBootcamp);
+bootcampsRouter.put("/:id", protect, httpUpdateBootcamp);
+bootcampsRouter.delete("/:id", protect, httpDeleteBootcamp);
 
 bootcampsRouter.get("/radius/:zipcode/:distance", httpGetBootcampsInRadius);
 
-bootcampsRouter.put("/:id/photo", httpUploadPhoto);
+bootcampsRouter.put("/:id/photo", protect, httpUploadPhoto);
 
 module.exports = bootcampsRouter;
