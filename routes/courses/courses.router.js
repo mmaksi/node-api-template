@@ -15,7 +15,14 @@ const coursesDatabase = require("../../models/Course.mongo");
 
 const coursesRouter = express.Router({ mergeParams: true });
 
-coursesRouter.get("/", advFiltering(coursesDatabase, ""), httpGetAllCourses);
+coursesRouter.get(
+  "/",
+  advFiltering(coursesDatabase, {
+    path: "bootcamp",
+    select: "name description",
+  }),
+  httpGetAllCourses
+);
 coursesRouter.post("/", httpAddCourse);
 
 coursesRouter.get("/:id", httpGetCourse);

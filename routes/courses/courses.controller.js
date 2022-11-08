@@ -1,11 +1,9 @@
 const {
-  getAllCourses,
   getCourse,
   updateCourse,
   deleteCourse,
 } = require("../../models/Course.model");
 const coursesDatabase = require("../../models/Course.mongo");
-const bootcampsData = require("../../models/Bootcamp.mongo");
 const { getBootcampById } = require("../../models/Bootcamp.model");
 const asyncHandler = require("../../utils/asyncHandler");
 const ErrorResponse = require("../../utils/errorResponse");
@@ -26,7 +24,6 @@ const httpGetAllCourses = asyncHandler(async (req, res, next) => {
     });
     // Get all courses
   } else {
-    const courses = await getAllCourses();
     res.status(200).json(res.advancedResults);
   }
 });
