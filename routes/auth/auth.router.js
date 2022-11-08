@@ -4,7 +4,7 @@ const {
   httpSigninUser,
   getCurrentUser,
 } = require("./auth.controller");
-const protect = require("../../middleware/auth.middleware");
+const { protect } = require("../../middleware/auth.middleware");
 
 const authRouter = express.Router();
 

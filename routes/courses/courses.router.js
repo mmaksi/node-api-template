@@ -10,7 +10,7 @@ const {
 
 const advFiltering = require("../../middleware/advFilters");
 const coursesDatabase = require("../../models/Course.mongo");
-const protect = require("../../middleware/auth.middleware");
+const { protect, authorize } = require("../../middleware/auth.middleware");
 
 const coursesRouter = express.Router({ mergeParams: true });
 
@@ -22,11 +22,31 @@ coursesRouter.get(
   }),
   httpGetAllCourses
 );
-coursesRouter.post("/", protect, httpAddCourse);
+coursesRouter.post(
+  "/",
+  protect,
+  authorize("admin", "publisher"),
+  httpAddCourse
+);
 
 coursesRouter.get("/:id", httpGetCourse);
-coursesRouter.post("/:id", protect, httpAddCourse);
-coursesRouter.put("/:id", protect, httpUpdateCourse);
-coursesRouter.delete("/:id", protect, httpDeleteCourse);
+coursesRouter.post(
+  "/:id",
+  protect,
+  authorize("admin", "publisher"),
+  httpAddCourse
+);
+coursesRouter.put(
+  "/:id",
+  protect,
+  authorize("admin", "publisher"),
+  httpUpdateCourse
+);
+coursesRouter.delete(
+  "/:id",
+  protect,
+  authorize("admin", "publisher"),
+  httpDeleteCourse
+);
 
 module.exports = coursesRouter;

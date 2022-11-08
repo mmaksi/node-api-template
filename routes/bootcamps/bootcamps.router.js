@@ -12,7 +12,7 @@ const {
 
 const bootcampsDatabase = require("../../models/Bootcamp.mongo");
 const advFiltering = require("../../middleware/advFilters");
-const protect = require("../../middleware/auth.middleware");
+const { protect, authorize } = require("../../middleware/auth.middleware");
 
 const bootcampsRouter = express.Router();
 
@@ -25,11 +25,26 @@ bootcampsRouter.get(
   advFiltering(bootcampsDatabase, "courses"),
   httpGetAllBootcamps
 );
-bootcampsRouter.post("/", protect, httpCreateBootcamp);
+bootcampsRouter.post(
+  "/",
+  protect,
+  authorize("admin", "publisher"),
+  httpCreateBootcamp
+);
 
 bootcampsRouter.get("/:id", httpGetBootcamp);
-bootcampsRouter.put("/:id", protect, httpUpdateBootcamp);
-bootcampsRouter.delete("/:id", protect, httpDeleteBootcamp);
+bootcampsRouter.put(
+  "/:id",
+  protect,
+  authorize("admin", "publisher"),
+  httpUpdateBootcamp
+);
+bootcampsRouter.delete(
+  "/:id",
+  protect,
+  authorize("admin", "publisher"),
+  httpDeleteBootcamp
+);
 
 bootcampsRouter.get("/radius/:zipcode/:distance", httpGetBootcampsInRadius);
 
