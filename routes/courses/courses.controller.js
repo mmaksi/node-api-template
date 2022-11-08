@@ -27,9 +27,7 @@ const httpGetAllCourses = asyncHandler(async (req, res, next) => {
     // Get all courses
   } else {
     const courses = await getAllCourses();
-    res
-      .status(200)
-      .json({ success: true, count: courses.length, data: courses });
+    res.status(200).json(res.advancedResults);
   }
 });
 

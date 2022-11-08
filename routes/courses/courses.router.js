@@ -10,9 +10,12 @@ const {
   httpDeleteCourse,
 } = require("./courses.controller");
 
+const advFiltering = require("../../middleware/advFilters");
+const coursesDatabase = require("../../models/Course.mongo");
+
 const coursesRouter = express.Router({ mergeParams: true });
 
-coursesRouter.get("/", httpGetAllCourses);
+coursesRouter.get("/", advFiltering(coursesDatabase, ""), httpGetAllCourses);
 coursesRouter.post("/", httpAddCourse);
 
 coursesRouter.get("/:id", httpGetCourse);
