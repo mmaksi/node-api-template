@@ -30,7 +30,6 @@ const protect = asyncHandler(async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     // Attach a user to the request object
     req.user = await userDatabase.findById(decoded.id);
-    console.log("pro", req.user);
     next();
   } catch (err) {
     return next(new ErrorResponse("Not authorized to access this route", 401));

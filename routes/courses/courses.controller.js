@@ -51,7 +51,6 @@ const httpAddCourse = asyncHandler(async (req, res, next) => {
   // req.body.user = req.user.id;
 
   const bootcamp = await getBootcampById(req.params.id);
-  console.log(bootcamp);
 
   if (!bootcamp) {
     return next(
