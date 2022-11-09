@@ -2,7 +2,8 @@ const fs = require("fs");
 const colors = require("colors");
 const { mongoConnect } = require("./services/mongo");
 const bootcampsDatabase = require("./models/Bootcamp.mongo");
-const courseDatabase = require("./models/Course.mongo");
+const coursesDatabase = require("./models/Course.mongo");
+const usersDatabase = require("./models/User.mongo");
 
 // Connect to DB
 mongoConnect();
@@ -16,9 +17,9 @@ const courses = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/courses.json`, "utf-8")
 );
 
-// const users = JSON.parse(
-//   fs.readFileSync(`${__dirname}/_data/users.json`, "utf-8")
-// );
+const users = JSON.parse(
+  fs.readFileSync(`${__dirname}/_data/users.json`, "utf-8")
+);
 
 // const reviews = JSON.parse(
 //   fs.readFileSync(`${__dirname}/_data/reviews.json`, "utf-8")
@@ -28,8 +29,8 @@ const courses = JSON.parse(
 async function importData() {
   try {
     await bootcampsDatabase.create(bootcamps);
-    await courseDatabase.create(courses);
-    // await User.create(users);
+    await coursesDatabase.create(courses);
+    await usersDatabase.create(users);
     // await Review.create(reviews);
     console.log("Data Imported...".green.inverse);
     process.exit();
@@ -42,8 +43,8 @@ async function importData() {
 const deleteData = async () => {
   try {
     await bootcampsDatabase.deleteMany();
-    await courseDatabase.deleteMany();
-    // await User.deleteMany();
+    await coursesDatabase.deleteMany();
+    await usersDatabase.deleteMany();
     // await Review.deleteMany();
     console.log("Data Destroyed...".red.inverse);
     process.exit();
