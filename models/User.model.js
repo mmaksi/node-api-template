@@ -10,7 +10,13 @@ const getUserById = async (id) => {
   return user;
 };
 
+const findUser = async (criteria, data) => {
+  const foundUser = await userDatabase.findOne({ [criteria]: data });
+  return foundUser;
+};
+
 module.exports = {
   registerUser,
   getUserById,
+  findUser,
 };
