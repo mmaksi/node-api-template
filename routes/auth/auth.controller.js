@@ -55,6 +55,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 };
 
 const getCurrentUser = asyncHandler(async (req, res, next) => {
+  console.log(req.user);
   const user = await getUserById(req.user.id);
   return res.status(200).json({
     success: true,

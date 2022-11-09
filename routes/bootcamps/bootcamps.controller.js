@@ -67,15 +67,16 @@ const httpCreateBootcamp = asyncHandler(async (req, res, next) => {
  */
 const httpUpdateBootcamp = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const foundBootcamp = getBootcampById(id);
-  const isNotBootcampOwner =
-    foundBootcamp.user.toString() !== req.user.id && req.user.role !== "admin";
+  const foundBootcamp = await getBootcampById(id);
 
   // Check if requested bootcamp exists
   if (!foundBootcamp) {
     return next(new ErrorResponse(`This bootcamps is not found`, 404));
   } else {
-    // Make sure user is bootcamp owner
+    const isNotBootcampOwner =
+      // Make sure user is bootcamp owner
+      foundBootcamp.user.toString() !== req.user.id &&
+      req.user.role !== "admin";
     if (isNotBootcampOwner) {
       return next(
         new ErrorResponse(`User is not authorized to update this bootcamp`, 401)
@@ -93,15 +94,16 @@ const httpUpdateBootcamp = asyncHandler(async (req, res, next) => {
  *  Access {Private}
  */
 const httpDeleteBootcamp = asyncHandler(async (req, res, next) => {
-  const foundBootcamp = getBootcampById(id);
-  const isNotBootcampOwner =
-    foundBootcamp.user.toString() !== req.user.id && req.user.role !== "admin";
+  const foundBootcamp = await getBootcampById(req.params.id);
 
   // Check if requested bootcamp exists
   if (!foundBootcamp) {
     return next(new ErrorResponse(`This bootcamps is not found`, 404));
   } else {
     // Make sure user is bootcamp owner
+    const isNotBootcampOwner =
+      foundBootcamp.user.toString() !== req.user.id &&
+      req.user.role !== "admin";
     if (isNotBootcampOwner) {
       return next(
         new ErrorResponse(`User is not authorized to delete this bootcamp`, 401)
@@ -131,14 +133,15 @@ const httpGetBootcampsInRadius = asyncHandler(async (req, res) => {
 // @access    Private
 const httpUploadPhoto = asyncHandler(async (req, res, next) => {
   const foundBootcamp = await getBootcampById(req.params.id);
-  const isNotBootcampOwner =
-    foundBootcamp.user.toString() !== req.user.id && req.user.role !== "admin";
 
   // Check if requested bootcamp exists
   if (!foundBootcamp) {
     return next(new ErrorResponse(`This bootcamps is not found`, 404));
   } else {
     // Make sure user is bootcamp owner
+    const isNotBootcampOwner =
+      foundBootcamp.user.toString() !== req.user.id &&
+      req.user.role !== "admin";
     if (isNotBootcampOwner) {
       return next(
         new ErrorResponse(`User is not authorized to delete this bootcamp`, 401)
