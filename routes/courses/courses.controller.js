@@ -29,7 +29,7 @@ const httpGetAllCourses = asyncHandler(async (req, res, next) => {
 });
 
 // @desc      Get single course
-// @route     GET /api/v1/courses/:id
+// @route     GET /v1/courses/:id
 // @access    Public
 const httpGetCourse = asyncHandler(async (req, res, next) => {
   const course = await getCourse(req.params.id);
@@ -46,9 +46,12 @@ const httpGetCourse = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc      Delete course
+// @route     POST /v1/courses/:id
+// @access    Private
 const httpAddCourse = asyncHandler(async (req, res, next) => {
   req.body.bootcamp = req.params.id;
-  // req.body.user = req.user.id;
+  req.body.user = req.user.id;
 
   const bootcamp = await getBootcampById(req.params.id);
 
@@ -62,14 +65,14 @@ const httpAddCourse = asyncHandler(async (req, res, next) => {
   }
 
   // Make sure user is bootcamp owner
-  // if (bootcamp.user.toString() !== req.user.id && req.user.role !== "admin") {
-  //   return next(
-  //     new ErrorResponse(
-  //       `User ${req.user.id} is not authorized to add a course to bootcamp ${bootcamp._id}`,
-  //       401
-  //     )
-  //   );
-  // }
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        `User is not authorized to add a course to this bootcamp`,
+        401
+      )
+    );
+  }
 
   const course = await coursesDatabase.create(req.body);
 
@@ -80,37 +83,58 @@ const httpAddCourse = asyncHandler(async (req, res, next) => {
 });
 
 // @desc      Update course
-// @route     PUT /api/v1/courses/:id
+// @route     PUT /v1/courses/:id
 // @access    Private
 const httpUpdateCourse = asyncHandler(async (req, res, next) => {
   const foundCourse = await getCourse(req.params.id);
-  const updatedCourse = await updateCourse(req.params.id, req.body);
-  if (!foundCourse || !updatedCourse) {
+  if (!foundCourse) {
     return next(
-      new ErrorResponse(`No course with the id of ${req.params.id}`, 404)
+      new ErrorResponse(
+        `No bootcamp with the id of ${req.params.bootcampId}`,
+        404
+      )
     );
+  } else {
+    // Make sure user is course owner
+    if (
+      foundCourse.user.toString() !== req.user.id &&
+      req.user.role !== "admin"
+    ) {
+      return next(
+        new ErrorResponse(`User is not authorized to update this course`, 401)
+      );
+    } else {
+      const updatedCourse = await updateCourse(req.params.id, req.body);
+      return res.status(200).json({
+        success: true,
+        data: updatedCourse,
+      });
+    }
   }
-
-  return res.status(200).json({
-    success: true,
-    data: updatedCourse,
-  });
 });
 
 // @desc      Delete course
-// @route     DELETE /api/v1/courses/:id
+// @route     DELETE /v1/courses/:id
 // @access    Private
 const httpDeleteCourse = asyncHandler(async (req, res, next) => {
-  const deletedCourse = await deleteCourse(req.params.id);
-  if (deletedCourse) {
-    res.status(200).json({
-      success: true,
-      data: {},
-    });
+  const foundCourse = await getCourse(req.params.id);
+  if (!foundCourse) {
   } else {
-    return next(
-      new ErrorResponse(`No course with the id of ${req.params.id}`, 404)
-    );
+    // Make sure user is course owner
+    if (
+      foundCourse.user.toString() !== req.user.id &&
+      req.user.role !== "admin"
+    ) {
+      return next(
+        new ErrorResponse(`User is not authorized to delete this course`, 401)
+      );
+    } else {
+      await deleteCourse(req.params.id);
+      res.status(200).json({
+        success: true,
+        data: {},
+      });
+    }
   }
 });
 
