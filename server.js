@@ -12,6 +12,9 @@ const coursesRouter = require("./routes/courses/courses.router");
 const bootcampsRouter = require("./routes/bootcamps/bootcamps.router");
 const authRouter = require("./routes/auth/auth.router");
 const usersRouter = require("./routes/users/users.router");
+const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
+const xss = require("xss-clean");
 
 const app = express();
 
@@ -25,6 +28,12 @@ if (process.env.NODE_ENV === "development") {
 }
 // Cookie Parser
 app.use(cookieParser());
+// Sanitize data
+app.use(mongoSanitize());
+// Set Security headers
+app.use(helmet());
+// Prevent XSS Attacks
+app.use(xss());
 // Set static directory
 app.use(express.static(path.join(__dirname, "public")));
 
