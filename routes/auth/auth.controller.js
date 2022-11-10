@@ -46,6 +46,22 @@ const httpSigninUser = asyncHandler(async (req, res, next) => {
   sendTokenResponse(user, 200, res);
 });
 
+// @desc      Logout user / clear cookie
+// @route     PUT /v1/auth/logout
+// @access    Private
+const httpLogout = asyncHandler(async (req, res, next) => {
+  // Clear cookie
+  res.cookie("token", "none", {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+
+  return res.status(200).json({
+    success: true,
+    data: {},
+  });
+});
+
 // @desc      GET auth
 // @route     GET /v1/auth/me
 // @access    Public
@@ -165,6 +181,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 module.exports = {
   httpRegisterUser,
   httpSigninUser,
+  httpLogout,
   getCurrentUser,
   httpForgotPassword,
   httpResetPassword,

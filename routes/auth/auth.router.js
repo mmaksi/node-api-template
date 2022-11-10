@@ -2,6 +2,7 @@ const express = require("express");
 const {
   httpRegisterUser,
   httpSigninUser,
+  httpLogout,
   getCurrentUser,
   httpForgotPassword,
   httpResetPassword,
@@ -19,6 +20,7 @@ authRouter.put("/updatepassword", protect, httpUpdatePassword);
 authRouter.post("/forgotpassword", httpForgotPassword);
 authRouter.post("/register", httpRegisterUser);
 authRouter.post("/login", httpSigninUser);
+authRouter.get("/logout", protect, httpLogout);
 
 authRouter.get("/me", protect, getCurrentUser);
 
