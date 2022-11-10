@@ -17,6 +17,7 @@ const helmet = require("helmet");
 const xss = require("xss-clean");
 const hpp = require("hpp");
 const rateLimit = require("express-rate-limit");
+const cors = require("cors");
 
 const app = express();
 
@@ -48,6 +49,8 @@ app.use(xss());
 app.use(hpp());
 // Rate limiting
 app.use(limiter);
+// Enabling CORS
+app.use(cors());
 
 // Set static directory
 app.use(express.static(path.join(__dirname, "public")));

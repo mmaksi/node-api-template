@@ -17,16 +17,6 @@ const getCourse = async (id) => {
 const addCourse = async (id) => {};
 
 const updateCourse = async (id, body) => {
-  // Make sure user is course owner
-  // if (course.user.toString() !== req.user.id && req.user.role !== "admin") {
-  //   return next(
-  //     new ErrorResponse(
-  //       `User ${req.user.id} is not authorized to update course ${course._id}`,
-  //       401
-  //     )
-  //   );
-  // }
-
   const course = await coursesDatabase.findByIdAndUpdate(id, body, {
     new: true,
     runValidators: true,

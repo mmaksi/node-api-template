@@ -76,7 +76,7 @@ const httpAddCourse = asyncHandler(async (req, res, next) => {
 
   const course = await coursesDatabase.create(req.body);
 
-  res.status(200).json({
+  res.status(201).json({
     success: true,
     data: course,
   });

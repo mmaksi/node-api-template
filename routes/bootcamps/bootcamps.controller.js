@@ -56,7 +56,7 @@ const httpCreateBootcamp = asyncHandler(async (req, res, next) => {
     );
   } else {
     const response = await createBootcamp(bootcamp);
-    res.status(200).json({ success: true, data: response });
+    res.status(201).json({ success: true, data: response });
   }
 });
 

@@ -48,6 +48,11 @@ bootcampsRouter.delete(
 
 bootcampsRouter.get("/radius/:zipcode/:distance", httpGetBootcampsInRadius);
 
-bootcampsRouter.put("/:id/photo", protect, httpUploadPhoto);
+bootcampsRouter.put(
+  "/:id/photo",
+  protect,
+  authorize("admin", "publisher"),
+  httpUploadPhoto
+);
 
 module.exports = bootcampsRouter;
