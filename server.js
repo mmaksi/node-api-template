@@ -15,13 +15,23 @@ const usersRouter = require("./routes/users/users.router");
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
 const xss = require("xss-clean");
+const hpp = require("hpp");
+const rateLimit = require("express-rate-limit");
 
 const app = express();
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
 
 // Body parser
 app.use(express.json());
 // File upload middleware
 app.use(fileUpload());
+
 // Dev logging middleware
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
@@ -34,6 +44,11 @@ app.use(mongoSanitize());
 app.use(helmet());
 // Prevent XSS Attacks
 app.use(xss());
+// Prevent HTTP Parameters Pollution Attacks
+app.use(hpp());
+// Rate limiting
+app.use(limiter);
+
 // Set static directory
 app.use(express.static(path.join(__dirname, "public")));
 
