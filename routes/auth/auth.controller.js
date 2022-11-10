@@ -38,7 +38,7 @@ const httpSigninUser = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(`Invalid credentials`, 401));
   }
   // Check if password matches
-  const isMatch = await user.matchPassword(password);
+  const isMatch = await user.matchPassword(password.toString());
   if (!isMatch) {
     return next(new ErrorResponse(`Invalid credentials`, 401));
   }
@@ -133,7 +133,7 @@ const httpUpdateDetails = asyncHandler(async (req, res, next) => {
 const httpUpdatePassword = asyncHandler(async (req, res, next) => {
   const user = await userDatabase.findById(req.user.id).select("+password");
 
-  if (!user.matchPassword(req.body.currentPassword)) {
+  if (!user.matchPassword(req.body.currentPassword.toString())) {
     return next(new ErrorResponse(`Password is incorrect`), 401);
   } else {
     user.password = req.body.newPassword;
