@@ -2,11 +2,14 @@ const {
   registerUser,
   getUserById,
   findUser,
+  findAuthUser,
+  updateUserDetails,
 } = require("../../models/User.model");
 const asyncHandler = require("../../utils/asyncHandler");
 const ErrorResponse = require("../../utils/errorResponse");
 const userDatabase = require("../../models/User.mongo");
 const sendEmail = require("../../utils/nodemailer");
+const crypto = require("crypto");
 
 // @desc      POST auth
 // @route     POST /v1/auth/register
@@ -34,13 +37,11 @@ const httpSigninUser = asyncHandler(async (req, res, next) => {
   if (!user) {
     return next(new ErrorResponse(`Invalid credentials`, 401));
   }
-
   // Check if password matches
   const isMatch = await user.matchPassword(password);
   if (!isMatch) {
     return next(new ErrorResponse(`Invalid credentials`, 401));
   }
-
   // Respond with cookie + token
   sendTokenResponse(user, 200, res);
 });
@@ -70,7 +71,7 @@ const httpForgotPassword = asyncHandler(async (req, res, next) => {
     // Create reset url
     const resetUrl = `${req.protocol}://${req.get(
       "host"
-    )}/v1/resetpassword/${resetToken}`;
+    )}/v1/auth/resetpassword/${resetToken}`;
     const message = `You are recieving this email because you or someone else a has requested a password reset. Please make a PUT request to \n\n ${resetUrl}`;
     try {
       await sendEmail({
@@ -88,6 +89,59 @@ const httpForgotPassword = asyncHandler(async (req, res, next) => {
   }
 });
 
+// @desc      PUT auth
+// @route     PUT /v1/auth/resetpassword/:resettoken
+// @access    Public
+const httpResetPassword = asyncHandler(async (req, res, next) => {
+  // Hash the resetToken sent from email
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(req.params.resettoken)
+    .digest("hex");
+  // Compare hashed resetToken from email with the hashed token in the DB
+  const user = await findAuthUser(resetPasswordToken);
+
+  if (!user) {
+    return next(new ErrorResponse(`Invalid token`, 400));
+  } else {
+    user.password = req.body.password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    sendTokenResponse(user, 200, res);
+  }
+});
+
+// @desc      PUT auth
+// @route     PUT /v1/auth/updatedetails
+// @access    Private/Admin
+const httpUpdateDetails = asyncHandler(async (req, res, next) => {
+  const id = req.user;
+  const { name, email } = req.body;
+  const fieldsToUpdate = { name, email };
+  const user = await updateUserDetails(id, fieldsToUpdate);
+  return res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
+
+// @desc      PUT auth
+// @route     PUT /v1/auth/updatepassword
+// @access    Private/Admin
+const httpUpdatePassword = asyncHandler(async (req, res, next) => {
+  const user = await userDatabase.findById(req.user.id).select("+password");
+
+  if (!user.matchPassword(req.body.currentPassword)) {
+    return next(new ErrorResponse(`Password is incorrect`), 401);
+  } else {
+    user.password = req.body.newPassword;
+    await user.save();
+    sendTokenResponse(user, 200, res);
+  }
+});
+
 const sendTokenResponse = (user, statusCode, res) => {
   // Cookie options
   const options = {
@@ -98,7 +152,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     secure: process.env.NODE_ENV === "production" ? true : false,
   };
 
-  // It's up for the client to decide how to handle the cookie
+  // It's up for the client to decide how to handle the token
   user.getSignedJwtToken((err, token) => {
     if (!err)
       return res
@@ -113,4 +167,7 @@ module.exports = {
   httpSigninUser,
   getCurrentUser,
   httpForgotPassword,
+  httpResetPassword,
+  httpUpdateDetails,
+  httpUpdatePassword,
 };
