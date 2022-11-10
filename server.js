@@ -11,6 +11,7 @@ const errorHandler = require("./middleware/error.middleware");
 const coursesRouter = require("./routes/courses/courses.router");
 const bootcampsRouter = require("./routes/bootcamps/bootcamps.router");
 const authRouter = require("./routes/auth/auth.router");
+const usersRouter = require("./routes/users/users.router");
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/v1/bootcamps", bootcampsRouter);
 app.use("/v1/courses", coursesRouter);
 app.use("/v1/auth", authRouter);
+app.use("/v1/users", usersRouter);
 app.use(errorHandler);
 
 // Load env vars

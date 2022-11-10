@@ -1,22 +1,22 @@
-const userDatabase = require("./User.mongo");
+const usersDatabase = require("./User.mongo");
 
 const registerUser = async (user) => {
-  const registeredUser = await userDatabase.create(user);
+  const registeredUser = await usersDatabase.create(user);
   return registeredUser;
 };
 
 const getUserById = async (id) => {
-  const user = await userDatabase.findById(id);
+  const user = await usersDatabase.findById(id);
   return user;
 };
 
 const findUser = async (criteria, data) => {
-  const foundUser = await userDatabase.findOne({ [criteria]: data });
+  const foundUser = await usersDatabase.findOne({ [criteria]: data });
   return foundUser;
 };
 
 const findAuthUser = async (resetPasswordToken) => {
-  const user = await userDatabase.findOne({
+  const user = await usersDatabase.findOne({
     resetPasswordToken,
     resetPasswordExpire: { $gt: Date.now() },
   });
@@ -24,11 +24,15 @@ const findAuthUser = async (resetPasswordToken) => {
 };
 
 const updateUserDetails = async (id, fieldsToUpdate) => {
-  const user = await userDatabase.findOneAndUpdate(id, fieldsToUpdate, {
+  const user = await usersDatabase.findOneAndUpdate(id, fieldsToUpdate, {
     new: true,
     runValidators: true,
   });
   return user;
+};
+
+const deleteUser = async (id) => {
+  await usersDatabase.findByIdAndDelete(id);
 };
 
 module.exports = {
@@ -37,4 +41,5 @@ module.exports = {
   findUser,
   findAuthUser,
   updateUserDetails,
+  deleteUser,
 };
