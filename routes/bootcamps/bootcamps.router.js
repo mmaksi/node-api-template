@@ -13,11 +13,13 @@ const {
 const bootcampsDatabase = require("../../models/Bootcamp.mongo");
 const advFiltering = require("../../middleware/advFilters");
 const { protect, authorize } = require("../../middleware/auth.middleware");
+const reviewsRouter = require("../reviews/reviews.router");
 
 const bootcampsRouter = express.Router();
 
 // Reroutering to other resources
 bootcampsRouter.use("/:id/courses", coursesRouter);
+bootcampsRouter.use("/:bootcampId/reviews", reviewsRouter);
 
 // Internal routes
 bootcampsRouter.get(

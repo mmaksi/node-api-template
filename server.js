@@ -18,6 +18,7 @@ const xss = require("xss-clean");
 const hpp = require("hpp");
 const rateLimit = require("express-rate-limit");
 const cors = require("cors");
+const reviewsRouter = require("./routes/reviews/reviews.router");
 
 const app = express();
 
@@ -60,6 +61,8 @@ app.use("/v1/bootcamps", bootcampsRouter);
 app.use("/v1/courses", coursesRouter);
 app.use("/v1/auth", authRouter);
 app.use("/v1/users", usersRouter);
+app.use("/v1/reviews", reviewsRouter);
+
 app.use(errorHandler);
 
 // Load env vars
