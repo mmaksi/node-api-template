@@ -26,9 +26,19 @@ const addReviewToBootcamp = async (review) => {
   return newReview;
 };
 
+const updateReview = async (reviewId, payload) => {
+  const review = await reviewsDatabase.findByIdAndUpdate(reviewId, payload, {
+    new: true,
+    runValidators: true,
+  });
+
+  review.save();
+};
+
 module.exports = {
   getAllReviews,
   getBootcampReviews,
   getReviewById,
   addReviewToBootcamp,
+  updateReview,
 };

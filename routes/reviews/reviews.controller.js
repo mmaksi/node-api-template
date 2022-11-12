@@ -3,6 +3,7 @@ const {
   getReviewById,
   addReviewToBootcamp,
   getBootcampReviews,
+  updateReview,
 } = require("../../models/Review.model");
 const asyncHandler = require("../../utils/asyncHandler");
 
@@ -59,15 +60,56 @@ const httpAddReview = asyncHandler(async (req, res, next) => {
   }
 });
 
-// const httpUpdateReview = asyncHandler(async (req, res, next) => {
-//   const reviews = await getAllReviews();
-//   res.status(200).json(reviews);
-// });
+// @desc      Update review
+// @route     PUT /v1/reviews/:id
+// @access    Private
+const httpUpdateReview = asyncHandler(async (req, res, next) => {
+  const reviewId = req.params.id;
+  let review = await getReviewById(reviewId);
 
-// const httpDeleteReview = asyncHandler(async (req, res, next) => {
-//   const reviews = await getAllReviews();
-//   res.status(200).json(reviews);
-// });
+  if (!review) {
+    return next(
+      new ErrorResponse(`No review with the id of ${req.params.id}`, 404)
+    );
+  }
+
+  // Make sure review belongs to user or user is admin
+  if (review.user.toString() !== req.user.id || req.user.role !== "admin") {
+    return next(new ErrorResponse(`Not authorized to update this review`, 401));
+  }
+
+  review = await updateReview(req.params.id, req.body);
+
+  res.status(200).json({
+    success: true,
+    data: review,
+  });
+});
+
+// @desc      Delete review
+// @route     DELETE /v1/reviews/:id
+// @access    Private
+const httpDeleteReview = asyncHandler(async (req, res, next) => {
+  const review = await getReviewById(req.params.id);
+
+  if (!review) {
+    return next(
+      new ErrorResponse(`No review with the id of ${req.params.id}`, 404)
+    );
+  }
+
+  // Make sure review belongs to user or user is admin
+  if (review.user.toString() !== req.user.id || req.user.role !== "admin") {
+    return next(new ErrorResponse(`Not authorized to update review`, 401));
+  }
+
+  await review.remove();
+
+  res.status(200).json({
+    success: true,
+    data: {},
+  });
+});
 
 module.exports = {
   httpGetAllReviews,
