@@ -1,18 +1,18 @@
 const express = require("express");
 const {
-  httpGetReviews,
+  httpGetAllReviews,
   httpGetReview,
   httpAddReview,
   httpUpdateReview,
   httpDeleteReview,
-} = require("../controllers/reviews");
+} = require("./reviews.controller.js");
 
 const reviewsDatabase = require("../../models/Review.mongo");
 
 const reviewsRouter = express.Router({ mergeParams: true });
 
 const advancedResults = require("../../middleware/advFilters");
-const { protect, authorize } = require("../../middleware/auth.middlewareauth");
+const { protect, authorize } = require("../../middleware/auth.middleware");
 
 reviewsRouter.get(
   "/",
@@ -20,7 +20,7 @@ reviewsRouter.get(
     path: "bootcamp",
     select: "name description",
   }),
-  httpGetReviews
+  httpGetAllReviews
 );
 reviewsRouter.get("/:id", httpGetReview);
 reviewsRouter.post("/", protect, authorize("user", "admin"), httpAddReview);

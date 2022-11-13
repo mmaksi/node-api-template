@@ -4,6 +4,7 @@ const { mongoConnect } = require("./services/mongo");
 const bootcampsDatabase = require("./models/Bootcamp.mongo");
 const coursesDatabase = require("./models/Course.mongo");
 const usersDatabase = require("./models/User.mongo");
+const reviewsDatabase = require("./models/Review.mongo");
 
 // Connect to DB
 mongoConnect();
@@ -21,9 +22,9 @@ const users = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/users.json`, "utf-8")
 );
 
-// const reviews = JSON.parse(
-//   fs.readFileSync(`${__dirname}/_data/reviews.json`, "utf-8")
-// );
+const reviews = JSON.parse(
+  fs.readFileSync(`${__dirname}/_data/reviews.json`, "utf-8")
+);
 
 // Import into DB
 async function importData() {
@@ -31,7 +32,7 @@ async function importData() {
     await bootcampsDatabase.create(bootcamps);
     await coursesDatabase.create(courses);
     await usersDatabase.create(users);
-    // await Review.create(reviews);
+    await reviewsDatabase.create(reviews);
     console.log("Data Imported...".green.inverse);
     process.exit();
   } catch (err) {
@@ -45,7 +46,7 @@ const deleteData = async () => {
     await bootcampsDatabase.deleteMany();
     await coursesDatabase.deleteMany();
     await usersDatabase.deleteMany();
-    // await Review.deleteMany();
+    await reviewsDatabase.deleteMany();
     console.log("Data Destroyed...".red.inverse);
     process.exit();
   } catch (err) {

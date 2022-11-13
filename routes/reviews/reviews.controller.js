@@ -6,6 +6,7 @@ const {
   updateReview,
 } = require("../../models/Review.model");
 const asyncHandler = require("../../utils/asyncHandler");
+const ErrorResponse = require("../../utils/errorResponse");
 
 // @desc      Get reviews
 // @route     GET /v1/reviews
@@ -49,11 +50,11 @@ const httpAddReview = asyncHandler(async (req, res, next) => {
   reviewToAdd.user = req.user.id;
   reviewToAdd.bootcamp = req.params.bootcampId;
   const newReview = await addReviewToBootcamp(reviewToAdd);
-  // Check if booycamp ID is found and new review is created
+  // Check if bootcamp ID is found and new review is created
   if (newReview) {
     return res.status(201).json({
       success: true,
-      data: review,
+      data: newReview,
     });
   } else {
     return next(new ErrorResponse(`No bootcamp found with this ID`, 404));
