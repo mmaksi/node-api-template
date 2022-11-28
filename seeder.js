@@ -43,9 +43,9 @@ async function importData() {
 // Delete data
 const deleteData = async () => {
   try {
-    await bootcampsDatabase.deleteMany();
-    await coursesDatabase.deleteMany();
-    await usersDatabase.deleteMany();
+    // await bootcampsDatabase.deleteMany();
+    // await coursesDatabase.deleteMany();
+    // await usersDatabase.deleteMany();
     await reviewsDatabase.deleteMany();
     console.log("Data Destroyed...".red.inverse);
     process.exit();

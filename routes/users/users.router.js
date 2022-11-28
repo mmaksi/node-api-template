@@ -16,11 +16,11 @@ const {
 const usersRouter = express.Router();
 
 usersRouter.use(protect);
-usersRouter.use(authorize);
+usersRouter.use(authorize("admin"));
 
 usersRouter.get("/", advFiltering(usersDataBase), httpGetAllUsers);
 usersRouter.get("/:id", httpGetUser);
 usersRouter.put("/:id", httpUpdateUser);
-usersRouter.put("/:id", httpDeleteUser);
+usersRouter.delete("/:id", httpDeleteUser);
 
 module.exports = usersRouter;

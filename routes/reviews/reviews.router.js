@@ -33,7 +33,7 @@ reviewsRouter.put(
 reviewsRouter.delete(
   "/:id",
   protect,
-  authorize("user", "admin"),
+  // authorize("user", "admin"),
   httpDeleteReview
 );
 
